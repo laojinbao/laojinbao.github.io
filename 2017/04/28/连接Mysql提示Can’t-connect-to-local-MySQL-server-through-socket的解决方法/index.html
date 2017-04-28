@@ -74,12 +74,10 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="shigin ,Hexo, NexT" />
+  <meta name="keywords" content="socket,mysql,环境配置," />
 
 
 
-
-  
 
 
   <link rel="alternate" href="/atom.xml" title="shigin" type="application/atom+xml" />
@@ -94,16 +92,17 @@
 
 
 
-<meta name="description" content="14年毕业，曾搬过一年砖，现宝宝巴士拍黄片一枚.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://shigin.cc/categories/index.html">
+<meta name="description" content="在新环境测试项目的时候突然爆出了下面提示错误：1ERROR 2002 (HY000): Can&amp;apos;t connect to local MySQL server through socket &amp;apos;/var/lib/mysql/mysql.sock&amp;apos; (2) 产生问题的一般有两种情况：">
+<meta name="keywords" content="socket,mysql,环境配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="连接Mysql提示Can’t connect to local MySQL server through socket的解决方法">
+<meta property="og:url" content="http://shigin.cc/2017/04/28/连接Mysql提示Can’t-connect-to-local-MySQL-server-through-socket的解决方法/index.html">
 <meta property="og:site_name" content="shigin">
-<meta property="og:description" content="14年毕业，曾搬过一年砖，现宝宝巴士拍黄片一枚.">
-<meta property="og:updated_time" content="2017-04-28T02:43:47.000Z">
+<meta property="og:description" content="在新环境测试项目的时候突然爆出了下面提示错误：1ERROR 2002 (HY000): Can&amp;apos;t connect to local MySQL server through socket &amp;apos;/var/lib/mysql/mysql.sock&amp;apos; (2) 产生问题的一般有两种情况：">
+<meta property="og:updated_time" content="2017-04-28T07:59:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
-<meta name="twitter:description" content="14年毕业，曾搬过一年砖，现宝宝巴士拍黄片一枚.">
+<meta name="twitter:title" content="连接Mysql提示Can’t connect to local MySQL server through socket的解决方法">
+<meta name="twitter:description" content="在新环境测试项目的时候突然爆出了下面提示错误：1ERROR 2002 (HY000): Can&amp;apos;t connect to local MySQL server through socket &amp;apos;/var/lib/mysql/mysql.sock&amp;apos; (2) 产生问题的一般有两种情况：">
 
 
 
@@ -131,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://shigin.cc/categories/"/>
+  <link rel="canonical" href="http://shigin.cc/2017/04/28/连接Mysql提示Can’t-connect-to-local-MySQL-server-through-socket的解决方法/"/>
 
 
 
 
 
-  <title>categories | shigin</title>
+  <title>连接Mysql提示Can’t connect to local MySQL server through socket的解决方法 | shigin</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -168,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -253,25 +252,194 @@
             
 
   <div id="posts" class="posts-expand">
-  <header class="post-header">
+    
 
-	<h1 class="post-title" itemprop="name headline">categories</h1>
+  
 
+  
+  
+  
 
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://shigin.cc/2017/04/28/连接Mysql提示Can’t-connect-to-local-MySQL-server-through-socket的解决方法/">
 
-</header>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shigin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://ootj527j1.bkt.clouddn.com/IMG_0193.PNG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="shigin">
+    </span>
 
     
-    
-      <div class="category-all-page">
-        <div class="category-all-title">
-            目前共计 2 个分类
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                连接Mysql提示Can’t connect to local MySQL server through socket的解决方法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-28T14:09:46+08:00">
+                2017-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/28/连接Mysql提示Can’t-connect-to-local-MySQL-server-through-socket的解决方法/" class="leancloud_visitors" data-flag-title="连接Mysql提示Can’t connect to local MySQL server through socket的解决方法">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
         </div>
-        <div class="category-all">
-          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><span class="category-list-count">1</span></li></ul>
-        </div>
-      </div>
+      </header>
     
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在新环境测试项目的时候突然爆出了下面提示错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ERROR 2002 (HY000): Can&apos;t connect to local MySQL server through socket &apos;/var/lib/mysql/mysql.sock&apos; (2)</div></pre></td></tr></table></figure></p>
+<p>产生问题的一般有两种情况：<br><a id="more"></a></p>
+<h3 id="mysql服务未正常启动"><a href="#mysql服务未正常启动" class="headerlink" title="mysql服务未正常启动"></a>mysql服务未正常启动</h3><p>由于mysql的socket文件是由mysqld服务启动时创建的，如果mysqld服务未正常启动，socket文件自然也不会被创建，当然会找不到socket文件了。解决办法:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">\# 重启服务器 </div><div class="line">[root@php54 conf]# service nginx restart</div></pre></td></tr></table></figure></p>
+<h3 id="socket文件路径在配置文件中设置不完整："><a href="#socket文件路径在配置文件中设置不完整：" class="headerlink" title="socket文件路径在配置文件中设置不完整："></a>socket文件路径在配置文件中设置不完整：</h3><p>假如mysql可以正常连接，使用php的mysql_connect函数却连接不了mysql，那就是配置文件出现问题(重装mysql，或者修改了my.cnf文件)，解决办法需要们修改/php.ini文件:<br>在php.ini文件中”[MySQL]”项下找到”mysql.default_socket”，并设置其值指向正确的mysql服务socket文件即可，如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[MySQL]</div><div class="line">.......</div><div class="line">mysql.default_socket = &quot;/var/lib/mysql/mysql.sock&quot;</div></pre></td></tr></table></figure></p>
+<p>同理，如果你环境配置支持mysqli或者pdo，也要相应的修改该路径</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/socket/" rel="tag"># socket</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+            <a href="/tags/环境配置/" rel="tag"># 环境配置</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/28/关于php调用shell权限问题/" rel="prev" title="关于php调用shell权限问题">
+                关于php调用shell权限问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -303,8 +471,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://ootj527j1.bkt.clouddn.com/IMG_0193.PNG"
@@ -373,6 +550,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql服务未正常启动"><span class="nav-number">1.</span> <span class="nav-text">mysql服务未正常启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket文件路径在配置文件中设置不完整："><span class="nav-number">2.</span> <span class="nav-text">socket文件路径在配置文件中设置不完整：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -491,6 +684,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
 
   
 
