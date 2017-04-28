@@ -369,12 +369,9 @@
 
       
         
-          
-          问题开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。
-排查原有代码
-12$cmd    = &apos;sh ./ng_config.sh&apos;;$result = shell_exec($cmd);
-
-          ...
+          <h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。</p>
+<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>原有代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$cmd    = &apos;sh ./ng_config.sh&apos;;</div><div class="line">$result = shell_exec($cmd);</div></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/04/28/关于php调用shell权限问题/#more" rel="contents">
