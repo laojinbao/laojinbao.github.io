@@ -79,7 +79,7 @@
 <meta property="og:description" content="前言XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一">
 <meta property="og:image" content="https://segmentfault.com/img/bVFYhe?w=1917&h=619">
 <meta property="og:image" content="https://segmentfault.com/img/bVFYhg?w=1906&h=1306">
-<meta property="og:updated_time" content="2017-05-02T02:18:41.000Z">
+<meta property="og:updated_time" content="2017-05-02T02:54:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XHprof+XHGui性能分析">
 <meta name="twitter:description" content="前言XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一">
@@ -346,7 +346,7 @@
       
 
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一个有用的命名来避开死循环。XHProf分析报告有助于理解被执行的代码的结构，它有一个简单的HTML的用户界面（ PHP写成的）。基于浏览器的性能分析用户界面能更容易查看，或是与同行们分享成果。也能绘制调用关系图。</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一个有用的命名来避开死循环。XHProf分析报告有助于理解被执行的代码的结构，它有一个简单的HTML的用户界面（ PHP写成的）。基于浏览器的性能分析用户界面能更容易查看，或是与同行们分享成果。也能绘制调用关系图。<br><a id="more"></a></p>
 <h3 id="Xhprof-Xhgui"><a href="#Xhprof-Xhgui" class="headerlink" title="Xhprof + Xhgui"></a>Xhprof + Xhgui</h3><p>Xhprof 由 Facebook 开发的，包含一个基本的用户界面用于查看性能数据。此外，Paul Reinheimer 开发了 Xhgui 和一个增强的用户界面（UI）用于查看、比较和分析性能数据。</p>
 <p><font color="red">环境要求：php&gt;=5.5</font></p>
 <h3 id="安装-XHProf"><a href="#安装-XHProf" class="headerlink" title="安装 XHProf"></a>安装 XHProf</h3><p>Xhprof 可通过 PECL 安装，步骤如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pecl install channel://pecl.php.net/xhprof-0.9.4</div></pre></td></tr></table></figure></p>
