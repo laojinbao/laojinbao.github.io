@@ -52,7 +52,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="XHprof,XhGui," />
+  <meta name="keywords" content="负载均衡," />
 
 
 
@@ -70,20 +70,17 @@
 
 
 
-<meta name="description" content="前言XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一">
-<meta name="keywords" content="XHprof,XhGui">
+<meta name="description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
+<meta name="keywords" content="负载均衡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="XHprof+XHGui性能分析">
-<meta property="og:url" content="http://shigin.cc/2017/05/02/XHprof-XHGui性能分析/index.html">
+<meta property="og:title" content="Nginx反向代理、负载均衡等功能简单实现配置">
+<meta property="og:url" content="http://shigin.cc/2017/05/12/Nginx反向代理、负载均衡等功能简单实现配置/index.html">
 <meta property="og:site_name" content="shigin">
-<meta property="og:description" content="前言XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一">
-<meta property="og:image" content="https://segmentfault.com/img/bVFYhe?w=1917&h=619">
-<meta property="og:image" content="https://segmentfault.com/img/bVFYhg?w=1906&h=1306">
-<meta property="og:updated_time" content="2017-05-02T02:54:53.000Z">
+<meta property="og:description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
+<meta property="og:updated_time" content="2017-05-12T09:50:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="XHprof+XHGui性能分析">
-<meta name="twitter:description" content="前言XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一">
-<meta name="twitter:image" content="https://segmentfault.com/img/bVFYhe?w=1917&h=619">
+<meta name="twitter:title" content="Nginx反向代理、负载均衡等功能简单实现配置">
+<meta name="twitter:description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
 
 
 
@@ -111,13 +108,13 @@
 
 
 
-  <link rel="canonical" href="http://shigin.cc/2017/05/02/XHprof-XHGui性能分析/"/>
+  <link rel="canonical" href="http://shigin.cc/2017/05/12/Nginx反向代理、负载均衡等功能简单实现配置/"/>
 
 
 
 
 
-  <title>XHprof+XHGui性能分析 | shigin</title>
+  <title>Nginx反向代理、负载均衡等功能简单实现配置 | shigin</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -242,7 +239,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://shigin.cc/2017/05/02/XHprof-XHGui性能分析/">
+    <link itemprop="mainEntityOfPage" href="http://shigin.cc/2017/05/12/Nginx反向代理、负载均衡等功能简单实现配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="shigin">
@@ -263,7 +260,7 @@
             
             
               
-                XHprof+XHGui性能分析
+                Nginx反向代理、负载均衡等功能简单实现配置
               
             
           </h1>
@@ -278,8 +275,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-02T08:48:54+08:00">
-                2017-05-02
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-12T15:57:23+08:00">
+                2017-05-12
               </time>
             
 
@@ -301,8 +298,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index">
-                    <span itemprop="name">php</span>
+                  <a href="/categories/nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">nginx</span>
                   </a>
                 </span>
 
@@ -318,7 +315,7 @@
 
           
           
-             <span id="/2017/05/02/XHprof-XHGui性能分析/" class="leancloud_visitors" data-flag-title="XHprof+XHGui性能分析">
+             <span id="/2017/05/12/Nginx反向代理、负载均衡等功能简单实现配置/" class="leancloud_visitors" data-flag-title="Nginx反向代理、负载均衡等功能简单实现配置">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -346,19 +343,52 @@
       
 
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>XHProf是一个分层PHP性能分析工具。它报告函数级别的请求次数和各种指标，包括阻塞时间，CPU时间和内存使用情况。一个函数的开销，可细分成调用者和被调用者的开销，XHProf数据收集阶段，它记录调用次数的追踪和包容性的指标弧在动态callgraph的一个程序。它独有的数据计算的报告/后处理阶段。在数据收集时，XHProfd通过检测循环来处理递归的函数调用，并通过给递归调用中每个深度的调用一个有用的命名来避开死循环。XHProf分析报告有助于理解被执行的代码的结构，它有一个简单的HTML的用户界面（ PHP写成的）。基于浏览器的性能分析用户界面能更容易查看，或是与同行们分享成果。也能绘制调用关系图。<br><a id="more"></a></p>
-<h3 id="Xhprof-Xhgui"><a href="#Xhprof-Xhgui" class="headerlink" title="Xhprof + Xhgui"></a>Xhprof + Xhgui</h3><p>Xhprof 由 Facebook 开发的，包含一个基本的用户界面用于查看性能数据。此外，Paul Reinheimer 开发了 Xhgui 和一个增强的用户界面（UI）用于查看、比较和分析性能数据。</p>
-<p><font color="red">环境要求：php&gt;=5.5</font></p>
-<h3 id="安装-XHProf"><a href="#安装-XHProf" class="headerlink" title="安装 XHProf"></a>安装 XHProf</h3><p>Xhprof 可通过 PECL 安装，步骤如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pecl install channel://pecl.php.net/xhprof-0.9.4</div></pre></td></tr></table></figure></p>
-<p>安装完毕之后在 php.ini 中加入响应配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">extension=xhprof.so</div></pre></td></tr></table></figure></p>
-<p>重启 php-fpm或者apache即可</p>
-<h3 id="安装mongodb"><a href="#安装mongodb" class="headerlink" title="安装mongodb"></a>安装mongodb</h3><p>客户端安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install mongodb #安装mongodb客户端</div></pre></td></tr></table></figure></p>
-<p>针对PHP的Mongo驱动:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pecl install mongo</div></pre></td></tr></table></figure></p>
-<p>安装完毕之后在 php.ini 中加入响应配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">加索引</div></pre></td></tr></table></figure></p>
-<p>$ mongo<br> &lt; use xhprof<br> &lt; db.results.ensureIndex( { ‘meta.SERVER.REQUEST_TIME’ : -1 } )<br> &lt; db.results.ensureIndex( { ‘profile.main().wt’ : -1 } )<br> &lt; db.results.ensureIndex( { ‘profile.main().mu’ : -1 } )<br> &lt; db.results.ensureIndex( { ‘profile.main().cpu’ : -1 } )<br> &lt; db.results.ensureIndex( { ‘meta.url’ : 1 } )<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">### 安装XHGui</div><div class="line">安装 Xhgui，必须直接从 git 获取。该项目可以在 github 上找到，地址为 https://github.com/perftools/xhgui</div></pre></td></tr></table></figure></p>
-<p>$ git clone <a href="https://github.com/perftools/xhgui.git" target="_blank" rel="external">https://github.com/perftools/xhgui.git</a><br>$ cd xhgui<br>$ php install.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">最后一个命令是运行 composer 以安装依赖并检查 xhgui 缓存目录的权限。如果失败，你可以手动运行 composer install。</div><div class="line">### 运行性能分析器</div><div class="line">运行分析器时，你需要在待分析的所有页面包含 external/header.php 脚本。为此，你可以在 PHP ini 文件设置 auto_prepend_file 。你既可以直接在公共 INI 文件进行设置，也可以限制到单一的虚拟主机(nginx或者apache)。</div><div class="line">对于 Nginx 服务器，在服务器配置中添加以下代码:</div></pre></td></tr></table></figure></p>
-<p>fastcgi_param PHP_VALUE “auto_prepend_file=/home/www/xhgui/external/header.php”;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">默认情况下,分析器运行时只分析(大约)1%的请求。这是由以下 external/header.php 代码控制的:</div></pre></td></tr></table></figure></p>
-<p>&lt;?php<br>if (rand(0, 100) !== 42) {<br>   return;<br>}<br>?&gt;<br>```<br>只需修改该段代码即可控制返回请求量的百分比，减轻线上服务器压力，至此整个安装过程结束<br><img src="https://segmentfault.com/img/bVFYhe?w=1917&amp;h=619" alt=""><br><img src="https://segmentfault.com/img/bVFYhg?w=1906&amp;h=1306" alt=""></p>
+        <p>###系统环境：<br>VirtualBox/vagrant<br>Centos6.6<br>nginx1.11.1<br>IP对应的机器名：</p>
+<table>
+<thead>
+<tr>
+<th>IP</th>
+<th>角色名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.1.10.92</td>
+<td>client</td>
+</tr>
+<tr>
+<td>192.168.33.10</td>
+<td>nginx server</td>
+</tr>
+<tr>
+<td>192.168.33.11</td>
+<td>web server 1</td>
+</tr>
+<tr>
+<td>192.168.33.12</td>
+<td>web server 2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nginx反向代理"><a href="#nginx反向代理" class="headerlink" title="nginx反向代理"></a>nginx反向代理</h3><p>测试代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@12 ~]# echo &quot;&lt;html&gt;192.168.33.11&lt;/html&gt;&quot; &gt; /home/www/html/index.html  </div><div class="line">[root@11~]# echo &quot;&lt;html&gt;192.168.33.12&lt;/html&gt;&quot; &gt; /home/www/html/index.html</div></pre></td></tr></table></figure></p>
+<p>测试结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@92]# curl 192.168.33.11  </div><div class="line">&lt;html&gt;  </div><div class="line">192.168.33.11 </div><div class="line">&lt;/html&gt;  </div><div class="line">[root@92]# curl 192.168.33.12 </div><div class="line">&lt;html&gt;  </div><div class="line">192.168.33.12  </div><div class="line">&lt;/html&gt;   </div><div class="line">##都成功了，我们进行下一步。</div></pre></td></tr></table></figure>
+<p>nginx.conf 配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">server &#123;  </div><div class="line">    listen       80;  </div><div class="line">    server_name  192.168.33.10; #根据环境介绍，nginx server ip  </div><div class="line">  </div><div class="line">    location / &#123;  </div><div class="line">           proxy_pass http://192.168.33.11; #被代理的服务器ip  </div><div class="line">                &#125;</div><div class="line">&#125;  </div><div class="line">#这个参数设置被代理服务器的地址和被映射的URL，地址可以使主机名、域名、IP加端口的模式，如：  </div><div class="line">#proxy_pass    http://192.168.1.6:8099/linuxtone/;</div></pre></td></tr></table></figure>
+<p>重启nginx,测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@92 ~]# curl 192.168.33.10    #访问反向代理服务器  </div><div class="line">&lt;html&gt;  </div><div class="line">192.168.33.11                  </div><div class="line">&lt;/html&gt;  </div><div class="line">#我们看到访问代理服务器，结果被转发到了web server1上。</div></pre></td></tr></table></figure>
+<p>分析nginx server和web server1的nginx日志，结果发现访问ip地址分别为10.1.10.92和192.168.33.10。<br>说白了反向代理，对客户来说nginx-server就是真正的服务器，实际上，当用户访问nginx-server的时候，会将请求转发到web-server1上，然后web-server1将请求的结果发给nginx-server，然后由nginx-server将请求的结果转交给用户。<br>如果才能显示真正的用户的真正ip地址，而不是反代的ip地址呢？ 配置如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">server &#123;  </div><div class="line">    listen       80;  </div><div class="line">    server_name  192.168.33.10;    #根据环境介绍，nginx server ip  </div><div class="line">  </div><div class="line">    location / &#123;  </div><div class="line">           proxy_pass http://192.168.33.11;    #被代理的服务器ip  </div><div class="line">           proxy_set_header Host $host;</div><div class="line">           proxy_set_header X-Real-IP $remote_addr;</div><div class="line">           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  </div><div class="line">                 &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>整个反向代理结束</p>
+<p>###负载均衡<br>配置介绍：<br>1.upstream是Nginx的HTTP Upstream模块，这个模块通过一个简单的调度算法来实现客户端IP到后端服务器的负载均衡。通过upstream指令指定了一个负载均衡器的名称xxxx。这个名称可以任意指定，在后面需要用到的地方直接调用即可。</p>
+<p>2.Nginx的负载均衡模块目前支持4种调度算法，下面进行分别介绍，其中后两项属于第三方调度算法。  </p>
+<ul>
+<li>轮询（默认）。每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li>ip_hash。每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。</li>
+<li>fair。这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的upstream_fair模块。</li>
+<li>url_hash。此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包。<br>配置如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">http &#123;  </div><div class="line">    include       /etc/nginx/mime.types;  </div><div class="line">    default_type  application/octet-stream;  </div><div class="line">  </div><div class="line">    log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;  </div><div class="line">                      &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;  </div><div class="line">                      &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;  </div><div class="line">  </div><div class="line">    access_log  /var/log/nginx/access.log  main;  </div><div class="line">  </div><div class="line">    sendfile        on;  </div><div class="line">    #tcp_nopush     on;  </div><div class="line">  </div><div class="line">    keepalive_timeout  65;  </div><div class="line">  </div><div class="line">    #gzip  on;  </div><div class="line">upstream test &#123;  </div><div class="line">    server 10.0.0.111:80;  </div><div class="line">    server 10.0.0.137:80;  </div><div class="line">    &#125;  </div><div class="line">service &#123;</div><div class="line">    server &#123;  </div><div class="line">    listen       80;  </div><div class="line">    server_name  192.168.33.10;    #根据环境介绍，nginx server ip  </div><div class="line">  </div><div class="line">    location / &#123;  </div><div class="line">           proxy_pass http://test;    #被代理的服务器ip  </div><div class="line">           proxy_set_header Host $host;</div><div class="line">           proxy_set_header X-Real-IP $remote_addr;</div><div class="line">           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  </div><div class="line">                 &#125;  </div><div class="line">    &#125;</div><div class="line">&#125;  </div><div class="line">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -388,9 +418,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/XHprof/" rel="tag"># XHprof</a>
-          
-            <a href="/tags/XhGui/" rel="tag"># XhGui</a>
+            <a href="/tags/负载均衡/" rel="tag"># 负载均衡</a>
           
         </div>
       
@@ -403,18 +431,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/03/数据库设计中的14个技巧/" rel="next" title="数据库设计中的14个技巧">
-                <i class="fa fa-chevron-left"></i> 数据库设计中的14个技巧
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/28/连接Mysql提示Can’t-connect-to-local-MySQL-server-through-socket的解决方法/" rel="prev" title="连接Mysql提示Can’t connect to local MySQL server through socket的解决方法">
-                连接Mysql提示Can’t connect to local MySQL server through socket的解决方法 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/03/数据库设计中的14个技巧/" rel="prev" title="数据库设计中的14个技巧">
+                数据库设计中的14个技巧 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -551,7 +575,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Xhprof-Xhgui"><span class="nav-number">2.</span> <span class="nav-text">Xhprof + Xhgui</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-XHProf"><span class="nav-number">3.</span> <span class="nav-text">安装 XHProf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装mongodb"><span class="nav-number">4.</span> <span class="nav-text">安装mongodb</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx反向代理"><span class="nav-number">1.</span> <span class="nav-text">nginx反向代理</span></a></li></ol></div>
             
 
           </div>
