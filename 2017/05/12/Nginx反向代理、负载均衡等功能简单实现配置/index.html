@@ -70,17 +70,17 @@
 
 
 
-<meta name="description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
+<meta name="description" content="系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2">
 <meta name="keywords" content="负载均衡">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nginx反向代理、负载均衡等功能简单实现配置">
 <meta property="og:url" content="http://shigin.cc/2017/05/12/Nginx反向代理、负载均衡等功能简单实现配置/index.html">
 <meta property="og:site_name" content="shigin">
-<meta property="og:description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
-<meta property="og:updated_time" content="2017-05-12T09:50:11.000Z">
+<meta property="og:description" content="系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2">
+<meta property="og:updated_time" content="2017-05-12T09:52:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx反向代理、负载均衡等功能简单实现配置">
-<meta name="twitter:description" content="###系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2    nginx反向代理测试代码：12[root@">
+<meta name="twitter:description" content="系统环境：VirtualBox/vagrantCentos6.6nginx1.11.1IP对应的机器名：    IP 角色名     10.1.10.92 client   192.168.33.10 nginx server   192.168.33.11 web server 1   192.168.33.12 web server 2">
 
 
 
@@ -343,7 +343,7 @@
       
 
       
-        <p>###系统环境：<br>VirtualBox/vagrant<br>Centos6.6<br>nginx1.11.1<br>IP对应的机器名：</p>
+        <h3 id="系统环境："><a href="#系统环境：" class="headerlink" title="系统环境："></a>系统环境：</h3><p>VirtualBox/vagrant<br>Centos6.6<br>nginx1.11.1<br>IP对应的机器名：</p>
 <table>
 <thead>
 <tr>
@@ -370,6 +370,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <h3 id="nginx反向代理"><a href="#nginx反向代理" class="headerlink" title="nginx反向代理"></a>nginx反向代理</h3><p>测试代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@12 ~]# echo &quot;&lt;html&gt;192.168.33.11&lt;/html&gt;&quot; &gt; /home/www/html/index.html  </div><div class="line">[root@11~]# echo &quot;&lt;html&gt;192.168.33.12&lt;/html&gt;&quot; &gt; /home/www/html/index.html</div></pre></td></tr></table></figure></p>
 <p>测试结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@92]# curl 192.168.33.11  </div><div class="line">&lt;html&gt;  </div><div class="line">192.168.33.11 </div><div class="line">&lt;/html&gt;  </div><div class="line">[root@92]# curl 192.168.33.12 </div><div class="line">&lt;html&gt;  </div><div class="line">192.168.33.12  </div><div class="line">&lt;/html&gt;   </div><div class="line">##都成功了，我们进行下一步。</div></pre></td></tr></table></figure>
@@ -575,7 +576,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx反向代理"><span class="nav-number">1.</span> <span class="nav-text">nginx反向代理</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统环境："><span class="nav-number">1.</span> <span class="nav-text">系统环境：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx反向代理"><span class="nav-number">2.</span> <span class="nav-text">nginx反向代理</span></a></li></ol></div>
             
 
           </div>
