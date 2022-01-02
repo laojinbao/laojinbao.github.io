@@ -1,48 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>关于php调用shell权限问题</title>
-    <url>/2017/04/28/%E5%85%B3%E4%BA%8Ephp%E8%B0%83%E7%94%A8shell%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。</p>
-<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>原有代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$cmd</span> = <span class="string">&#x27;sh ./ng_config.sh&#x27;</span>; </span><br><span class="line"><span class="variable">$result</span> = shell_exec(<span class="variable">$cmd</span>);</span><br></pre></td></tr></table></figure>
+    <title>Nginx反向代理、负载均衡等功能简单实现配置</title>
+    <url>/2017/05/12/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AD%89%E5%8A%9F%E8%83%BD%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="系统环境："><a href="#系统环境：" class="headerlink" title="系统环境："></a>系统环境：</h3><p>VirtualBox/vagrant<br>Centos6.6<br>nginx1.11.1<br>IP对应的机器名：</p>
+<table>
+<thead>
+<tr>
+<th>IP</th>
+<th>角色名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10.1.10.92</td>
+<td>client</td>
+</tr>
+<tr>
+<td>192.168.33.10</td>
+<td>nginx server</td>
+</tr>
+<tr>
+<td>192.168.33.11</td>
+<td>web server 1</td>
+</tr>
+<tr>
+<td>192.168.33.12</td>
+<td>web server 2</td>
+</tr>
+</tbody></table>
+<h3 id="nginx反向代理"><a href="#nginx反向代理" class="headerlink" title="nginx反向代理"></a>nginx反向代理</h3><p>测试代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@12 ~]<span class="comment"># echo &quot;&lt;html&gt;192.168.33.11&lt;/html&gt;&quot; &gt; /home/www/html/index.html  </span></span><br><span class="line">[root@11~]<span class="comment"># echo &quot;&lt;html&gt;192.168.33.12&lt;/html&gt;&quot; &gt; /home/www/html/index.html</span></span><br></pre></td></tr></table></figure>
 
-<p>修改后代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo &#x27;sh ./ng_config.sh 2&gt;&amp;1&#x27;;</span><br><span class="line">exec($cmd, $output, $return_val);</span><br></pre></td></tr></table></figure>
+<p>测试结果:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92]<span class="comment"># curl 192.168.33.11  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11 </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line">[root@92]<span class="comment"># curl 192.168.33.12 </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.12  </span><br><span class="line">&lt;/html&gt;   </span><br><span class="line"><span class="comment">##都成功了，我们进行下一步。</span></span><br></pre></td></tr></table></figure>
 
-<p>由于nginx设置的用户是www，没有办法看到权限高的错误返回信息，加上2&gt;&amp;1(将一个标准错误输出重定向到标准输出)之后,打印$output即可看到错误返回：权限不足，无法打开脚本的相关信息</p>
-<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>既然知道了问题为权限不足，那么问题就是要解决php权限问题：</p>
+<p>nginx.conf 配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10; <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11; <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">                &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#这个参数设置被代理服务器的地址和被映射的URL，地址可以使主机名、域名、IP加端口的模式，如：  </span></span><br><span class="line"><span class="comment">#proxy_pass    http://192.168.1.6:8099/linuxtone/;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>重启nginx,测试结果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92 ~]<span class="comment"># curl 192.168.33.10    #访问反向代理服务器  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11                  </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line"><span class="comment">#我们看到访问代理服务器，结果被转发到了web server1上。</span></span><br></pre></td></tr></table></figure>
+
+<p>分析nginx server和web server1的nginx日志，结果发现访问ip地址分别为10.1.10.92和192.168.33.10。<br>说白了反向代理，对客户来说nginx-server就是真正的服务器，实际上，当用户访问nginx-server的时候，会将请求转发到web-server1上，然后web-server1将请求的结果发给nginx-server，然后由nginx-server将请求的结果转交给用户。<br>如果才能显示真正的用户的真正ip地址，而不是反代的ip地址呢？ 配置如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个反向代理结束</p>
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>配置介绍：<br>1.upstream是Nginx的HTTP Upstream模块，这个模块通过一个简单的调度算法来实现客户端IP到后端服务器的负载均衡。通过upstream指令指定了一个负载均衡器的名称xxxx。这个名称可以任意指定，在后面需要用到的地方直接调用即可。</p>
+<p>2.Nginx的负载均衡模块目前支持4种调度算法，下面进行分别介绍，其中后两项属于第三方调度算法。</p>
 <ul>
-<li><p>编辑/etc/sudoers</p>
-</li>
-<li><p>加入www ALL=NOPASSWD:ALL</p>
-</li>
-<li><p>重启nginx</p>
-</li>
+<li>轮询（默认）。每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li>ip_hash。每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。</li>
+<li>fair。这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的upstream_fair模块。</li>
+<li>url_hash。此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包。<br>配置如下：</li>
 </ul>
-<p>重新执行程序了，发现shell脚本就可以正常执行</p>
-<p>ps：除非业务需求尽量不要去修改nginx的用户权限，有很高的安全风险。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http &#123;  </span><br><span class="line">    include       /etc/nginx/mime.types;  </span><br><span class="line">    default_type  application/octet-stream;  </span><br><span class="line">  </span><br><span class="line">    log_format  main  <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span>;  </span><br><span class="line">  </span><br><span class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;  </span><br><span class="line">  </span><br><span class="line">    sendfile        on;  </span><br><span class="line">    <span class="comment">#tcp_nopush     on;  </span></span><br><span class="line">  </span><br><span class="line">    keepalive_timeout  65;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">#gzip  on;  </span></span><br><span class="line">upstream <span class="built_in">test</span> &#123;  </span><br><span class="line">    server 192.168.33.11:80;  </span><br><span class="line">    server 192.168.33.12:80;  </span><br><span class="line">    &#125;  </span><br><span class="line">service &#123;</span><br><span class="line">    server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://<span class="built_in">test</span>;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</span></span><br></pre></td></tr></table></figure>
+
+
 ]]></content>
       <tags>
-        <tag>php,shell</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>连接Mysql提示Can’t connect to local MySQL server through socket的解决方法</title>
-    <url>/2017/04/28/%E8%BF%9E%E6%8E%A5Mysql%E6%8F%90%E7%A4%BACan%E2%80%99t%20connect%20to%20local%20MySQL%20server%20through%20socket%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h3 id="在新环境测试项目的时候突然爆出了下面提示错误："><a href="#在新环境测试项目的时候突然爆出了下面提示错误：" class="headerlink" title="在新环境测试项目的时候突然爆出了下面提示错误："></a>在新环境测试项目的时候突然爆出了下面提示错误：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR 2002 (HY000): Can<span class="string">&#x27;t connect to local MySQL server through socket &#x27;</span>/var/lib/mysql/mysql.sock<span class="string">&#x27; (2)</span></span><br></pre></td></tr></table></figure>
-
-<p>产生问题的一般有两种情况：</p>
-<h3 id="mysql服务未正常启动"><a href="#mysql服务未正常启动" class="headerlink" title="mysql服务未正常启动"></a>mysql服务未正常启动</h3><p>由于mysql的socket文件是由mysqld服务启动时创建的，如果mysqld服务未正常启动，socket文件自然也不会被创建，当然会找不到socket文件了。解决办法:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启服务器 </span></span><br><span class="line">[root@php54 conf]<span class="comment"># service nginx restart</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="socket文件路径在配置文件中设置不完整："><a href="#socket文件路径在配置文件中设置不完整：" class="headerlink" title="socket文件路径在配置文件中设置不完整："></a>socket文件路径在配置文件中设置不完整：</h3><p>假如mysql可以正常连接，使用php的mysql_connect函数却连接不了mysql，那就是配置文件出现问题(重装mysql，或者修改了my.cnf文件)，解决办法需要们修改/php.ini文件:<br>在php.ini文件中”[MySQL]”项下找到”mysql.default_socket”，并设置其值指向正确的mysql服务socket文件即可，如:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[MySQL]</span><br><span class="line">.......</span><br><span class="line">mysql.default_socket = <span class="string">&quot;/var/lib/mysql/mysql.sock&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>同理，如果你环境配置支持mysqli或者pdo，也要相应的修改该路径</p>
-]]></content>
-      <tags>
-        <tag>环境配置</tag>
+        <tag>nginx,负载均衡</tag>
       </tags>
   </entry>
   <entry>
@@ -124,65 +139,56 @@
 <h3 id="13-防止数据库设计打补丁的方法是“三少原则”"><a href="#13-防止数据库设计打补丁的方法是“三少原则”" class="headerlink" title="13. 防止数据库设计打补丁的方法是“三少原则”"></a>13. 防止数据库设计打补丁的方法是“三少原则”</h3><p>　　(1) 一个数据库中表的个数越少越好。只有表的个数少了，才能说明系统的E–R图少而精，去掉了重复的多余的实体，形成了对客观世界的高度抽象，进行了系统的数据集成，防止了打补丁式的设计;<br>　　(2) 一个表中组合主键的字段个数越少越好。因为主键的作用，一是建主键索引，二是做为子表的外键，所以组合主键的字段个数少了，不仅节省了运行时间，而且节省了索引存储空间;<br>　　(3) 一个表中的字段个数越少越好。只有字段的个数少了，才能说明在系统中不存在数据重复，且很少有数据冗余，更重要的是督促读者学会“列变行”，这样就防止了将子表中的字段拉入到主表中去，在主表中留下许多空余的字段。所谓“列变行”，就是将主表中的一部分内容拉出去，另外单独建一个子表。这个方法很简单，有的人就是不习惯、不采纳、不执行。<br>　　数据库设计的实用原则是：在数据冗余和处理速度之间找到合适的平衡点。“三少”是一个整体概念，综合观点，不能孤立某一个原则。该原则是相对的，不是绝对的。“三多”原则肯定是错误的。试想：若覆盖系统同样的功能，一百个实体(共一千个属性) 的E–R图，肯定比二百个实体(共二千个属性) 的E–R图，要好得多。<br>　　提倡“三少”原则，是叫读者学会利用数据库设计技术进行系统的数据集成。数据集成的步骤是将文件系统集成为应用数据库，将应用数据库集成为主题数据库，将主题数据库集成为全局综合数据库。集成的程度越高，数据共享性就越强，信息孤岛现象就越少，整个企业信息系统的全局E–R图中实体的个数、主键的个数、属性的个数就会越少。<br>　　提倡“三少”原则的目的，是防止读者利用打补丁技术，不断地对数据库进行增删改，使企业数据库变成了随意设计数据库表的“垃圾堆”，或数据库表的“大杂院”，最后造成数据库中的基本表、代码表、中间表、临时表杂乱无章，不计其数，导致企事业单位的信息系统无法维护而瘫痪。<br>　　“三多”原则任何人都可以做到，该原则是“打补丁方法”设计数据库的歪理学说。“三少”原则是少而精的原则，它要求有较高的数据库设计技巧与艺术，不是任何人都能做到的，因为该原则是杜绝用“打补丁方法”设计数据库的理论依据。</p>
 <h3 id="14-提高数据库运行效率的办法"><a href="#14-提高数据库运行效率的办法" class="headerlink" title="14. 提高数据库运行效率的办法"></a>14. 提高数据库运行效率的办法</h3><p>　　在给定的系统硬件和系统软件条件下，提高数据库系统的运行效率的办法是：<br>　　(1) 在数据库物理设计时，降低范式，增加冗余, 少用触发器, 多用存储过程。<br>　　(2) 当计算非常复杂、而且记录条数非常巨大时(例如一千万条)，复杂计算要先在数据库外面，以文件系统方式用C++语言计算处理完成之后，最后才入库追加到表中去。这是电信计费系统设计的经验。<br>　　(3) 发现某个表的记录太多，例如超过一千万条，则要对该表进行水平分割。水平分割的做法是，以该表主键PK的某个值为界线，将该表的记录水平分割为两个表。若发现某个表的字段太多，例如超过八十个，则垂直分割该表，将原来的一个表分解为两个表。<br>　　(4) 对数据库管理系统DBMS进行系统优化，即优化各种系统参数，如缓冲区个数。<br>　　(5) 在使用面向数据的SQL语言进行程序设计时，尽量采取优化算法。<br>　　总之，要提高数据库的运行效率，必须从数据库系统级优化、数据库设计级优化、程序实现级优化，这三个层次上同时下功夫。</p>
 ]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
   </entry>
   <entry>
-    <title>Nginx反向代理、负载均衡等功能简单实现配置</title>
-    <url>/2017/05/12/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AD%89%E5%8A%9F%E8%83%BD%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h3 id="系统环境："><a href="#系统环境：" class="headerlink" title="系统环境："></a>系统环境：</h3><p>VirtualBox/vagrant<br>Centos6.6<br>nginx1.11.1<br>IP对应的机器名：</p>
-<table>
-<thead>
-<tr>
-<th>IP</th>
-<th>角色名</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>10.1.10.92</td>
-<td>client</td>
-</tr>
-<tr>
-<td>192.168.33.10</td>
-<td>nginx server</td>
-</tr>
-<tr>
-<td>192.168.33.11</td>
-<td>web server 1</td>
-</tr>
-<tr>
-<td>192.168.33.12</td>
-<td>web server 2</td>
-</tr>
-</tbody></table>
-<h3 id="nginx反向代理"><a href="#nginx反向代理" class="headerlink" title="nginx反向代理"></a>nginx反向代理</h3><p>测试代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@12 ~]<span class="comment"># echo &quot;&lt;html&gt;192.168.33.11&lt;/html&gt;&quot; &gt; /home/www/html/index.html  </span></span><br><span class="line">[root@11~]<span class="comment"># echo &quot;&lt;html&gt;192.168.33.12&lt;/html&gt;&quot; &gt; /home/www/html/index.html</span></span><br></pre></td></tr></table></figure>
+    <title>关于php调用shell权限问题</title>
+    <url>/2017/04/28/%E5%85%B3%E4%BA%8Ephp%E8%B0%83%E7%94%A8shell%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。</p>
+<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>原有代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$cmd</span> = <span class="string">&#x27;sh ./ng_config.sh&#x27;</span>; </span><br><span class="line"><span class="variable">$result</span> = shell_exec(<span class="variable">$cmd</span>);</span><br></pre></td></tr></table></figure>
 
-<p>测试结果:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92]<span class="comment"># curl 192.168.33.11  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11 </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line">[root@92]<span class="comment"># curl 192.168.33.12 </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.12  </span><br><span class="line">&lt;/html&gt;   </span><br><span class="line"><span class="comment">##都成功了，我们进行下一步。</span></span><br></pre></td></tr></table></figure>
+<p>修改后代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo &#x27;sh ./ng_config.sh 2&gt;&amp;1&#x27;;</span><br><span class="line">exec($cmd, $output, $return_val);</span><br></pre></td></tr></table></figure>
 
-<p>nginx.conf 配置文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10; <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11; <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">                &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#这个参数设置被代理服务器的地址和被映射的URL，地址可以使主机名、域名、IP加端口的模式，如：  </span></span><br><span class="line"><span class="comment">#proxy_pass    http://192.168.1.6:8099/linuxtone/;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>重启nginx,测试结果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92 ~]<span class="comment"># curl 192.168.33.10    #访问反向代理服务器  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11                  </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line"><span class="comment">#我们看到访问代理服务器，结果被转发到了web server1上。</span></span><br></pre></td></tr></table></figure>
-
-<p>分析nginx server和web server1的nginx日志，结果发现访问ip地址分别为10.1.10.92和192.168.33.10。<br>说白了反向代理，对客户来说nginx-server就是真正的服务器，实际上，当用户访问nginx-server的时候，会将请求转发到web-server1上，然后web-server1将请求的结果发给nginx-server，然后由nginx-server将请求的结果转交给用户。<br>如果才能显示真正的用户的真正ip地址，而不是反代的ip地址呢？ 配置如下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>整个反向代理结束</p>
-<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>配置介绍：<br>1.upstream是Nginx的HTTP Upstream模块，这个模块通过一个简单的调度算法来实现客户端IP到后端服务器的负载均衡。通过upstream指令指定了一个负载均衡器的名称xxxx。这个名称可以任意指定，在后面需要用到的地方直接调用即可。</p>
-<p>2.Nginx的负载均衡模块目前支持4种调度算法，下面进行分别介绍，其中后两项属于第三方调度算法。</p>
+<p>由于nginx设置的用户是www，没有办法看到权限高的错误返回信息，加上2&gt;&amp;1(将一个标准错误输出重定向到标准输出)之后,打印$output即可看到错误返回：权限不足，无法打开脚本的相关信息</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>既然知道了问题为权限不足，那么问题就是要解决php权限问题：</p>
 <ul>
-<li>轮询（默认）。每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
-<li>ip_hash。每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。</li>
-<li>fair。这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的upstream_fair模块。</li>
-<li>url_hash。此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包。<br>配置如下：</li>
+<li><p>编辑/etc/sudoers</p>
+</li>
+<li><p>加入www ALL=NOPASSWD:ALL</p>
+</li>
+<li><p>重启nginx</p>
+</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http &#123;  </span><br><span class="line">    include       /etc/nginx/mime.types;  </span><br><span class="line">    default_type  application/octet-stream;  </span><br><span class="line">  </span><br><span class="line">    log_format  main  <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span>;  </span><br><span class="line">  </span><br><span class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;  </span><br><span class="line">  </span><br><span class="line">    sendfile        on;  </span><br><span class="line">    <span class="comment">#tcp_nopush     on;  </span></span><br><span class="line">  </span><br><span class="line">    keepalive_timeout  65;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">#gzip  on;  </span></span><br><span class="line">upstream <span class="built_in">test</span> &#123;  </span><br><span class="line">    server 192.168.33.11:80;  </span><br><span class="line">    server 192.168.33.12:80;  </span><br><span class="line">    &#125;  </span><br><span class="line">service &#123;</span><br><span class="line">    server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://<span class="built_in">test</span>;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</span></span><br></pre></td></tr></table></figure>
+<p>重新执行程序了，发现shell脚本就可以正常执行</p>
+<p>ps：除非业务需求尽量不要去修改nginx的用户权限，有很高的安全风险。</p>
+]]></content>
+      <categories>
+        <category>php</category>
+      </categories>
+      <tags>
+        <tag>php,shell</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>连接Mysql提示Can’t connect to local MySQL server through socket的解决方法</title>
+    <url>/2017/04/28/%E8%BF%9E%E6%8E%A5Mysql%E6%8F%90%E7%A4%BACan%E2%80%99t%20connect%20to%20local%20MySQL%20server%20through%20socket%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h3 id="在新环境测试项目的时候突然爆出了下面提示错误："><a href="#在新环境测试项目的时候突然爆出了下面提示错误：" class="headerlink" title="在新环境测试项目的时候突然爆出了下面提示错误："></a>在新环境测试项目的时候突然爆出了下面提示错误：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR 2002 (HY000): Can<span class="string">&#x27;t connect to local MySQL server through socket &#x27;</span>/var/lib/mysql/mysql.sock<span class="string">&#x27; (2)</span></span><br></pre></td></tr></table></figure>
 
+<p>产生问题的一般有两种情况：</p>
+<h3 id="mysql服务未正常启动"><a href="#mysql服务未正常启动" class="headerlink" title="mysql服务未正常启动"></a>mysql服务未正常启动</h3><p>由于mysql的socket文件是由mysqld服务启动时创建的，如果mysqld服务未正常启动，socket文件自然也不会被创建，当然会找不到socket文件了。解决办法:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启服务器 </span></span><br><span class="line">[root@php54 conf]<span class="comment"># service nginx restart</span></span><br></pre></td></tr></table></figure>
 
+<h3 id="socket文件路径在配置文件中设置不完整："><a href="#socket文件路径在配置文件中设置不完整：" class="headerlink" title="socket文件路径在配置文件中设置不完整："></a>socket文件路径在配置文件中设置不完整：</h3><p>假如mysql可以正常连接，使用php的mysql_connect函数却连接不了mysql，那就是配置文件出现问题(重装mysql，或者修改了my.cnf文件)，解决办法需要们修改/php.ini文件:<br>在php.ini文件中”[MySQL]”项下找到”mysql.default_socket”，并设置其值指向正确的mysql服务socket文件即可，如:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[MySQL]</span><br><span class="line">.......</span><br><span class="line">mysql.default_socket = <span class="string">&quot;/var/lib/mysql/mysql.sock&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>同理，如果你环境配置支持mysqli或者pdo，也要相应的修改该路径</p>
 ]]></content>
       <tags>
-        <tag>nginx,负载均衡</tag>
+        <tag>环境配置</tag>
       </tags>
   </entry>
 </search>
