@@ -35,13 +35,13 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92]<span class="comment"># curl 192.168.33.11  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11 </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line">[root@92]<span class="comment"># curl 192.168.33.12 </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.12  </span><br><span class="line">&lt;/html&gt;   </span><br><span class="line"><span class="comment">##都成功了，我们进行下一步。</span></span><br></pre></td></tr></table></figure>
 
 <p>nginx.conf 配置文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10; <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11; <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">                &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#这个参数设置被代理服务器的地址和被映射的URL，地址可以使主机名、域名、IP加端口的模式，如：  </span></span><br><span class="line"><span class="comment">#proxy_pass    http://192.168.1.6:8099/linuxtone/;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10; <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line"></span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11; <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">                &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#这个参数设置被代理服务器的地址和被映射的URL，地址可以使主机名、域名、IP加端口的模式，如：  </span></span><br><span class="line"><span class="comment">#proxy_pass    http://192.168.1.6:8099/linuxtone/;</span></span><br></pre></td></tr></table></figure>
 
 <p>重启nginx,测试结果</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@92 ~]<span class="comment"># curl 192.168.33.10    #访问反向代理服务器  </span></span><br><span class="line">&lt;html&gt;  </span><br><span class="line">192.168.33.11                  </span><br><span class="line">&lt;/html&gt;  </span><br><span class="line"><span class="comment">#我们看到访问代理服务器，结果被转发到了web server1上。</span></span><br></pre></td></tr></table></figure>
 
 <p>分析nginx server和web server1的nginx日志，结果发现访问ip地址分别为10.1.10.92和192.168.33.10。<br>说白了反向代理，对客户来说nginx-server就是真正的服务器，实际上，当用户访问nginx-server的时候，会将请求转发到web-server1上，然后web-server1将请求的结果发给nginx-server，然后由nginx-server将请求的结果转交给用户。<br>如果才能显示真正的用户的真正ip地址，而不是反代的ip地址呢？ 配置如下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line"></span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://192.168.33.11;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>整个反向代理结束</p>
 <h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>配置介绍：<br>1.upstream是Nginx的HTTP Upstream模块，这个模块通过一个简单的调度算法来实现客户端IP到后端服务器的负载均衡。通过upstream指令指定了一个负载均衡器的名称xxxx。这个名称可以任意指定，在后面需要用到的地方直接调用即可。</p>
@@ -52,9 +52,7 @@
 <li>fair。这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的upstream_fair模块。</li>
 <li>url_hash。此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包。<br>配置如下：</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http &#123;  </span><br><span class="line">    include       /etc/nginx/mime.types;  </span><br><span class="line">    default_type  application/octet-stream;  </span><br><span class="line">  </span><br><span class="line">    log_format  main  <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span>;  </span><br><span class="line">  </span><br><span class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;  </span><br><span class="line">  </span><br><span class="line">    sendfile        on;  </span><br><span class="line">    <span class="comment">#tcp_nopush     on;  </span></span><br><span class="line">  </span><br><span class="line">    keepalive_timeout  65;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">#gzip  on;  </span></span><br><span class="line">upstream <span class="built_in">test</span> &#123;  </span><br><span class="line">    server 192.168.33.11:80;  </span><br><span class="line">    server 192.168.33.12:80;  </span><br><span class="line">    &#125;  </span><br><span class="line">service &#123;</span><br><span class="line">    server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line">  </span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://<span class="built_in">test</span>;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</span></span><br></pre></td></tr></table></figure>
-
-
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http &#123;  </span><br><span class="line">    include       /etc/nginx/mime.types;  </span><br><span class="line">    default_type  application/octet-stream;  </span><br><span class="line"></span><br><span class="line">    log_format  main  <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span>;  </span><br><span class="line"></span><br><span class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;  </span><br><span class="line"></span><br><span class="line">    sendfile        on;  </span><br><span class="line">    <span class="comment">#tcp_nopush     on;  </span></span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;  </span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;  </span></span><br><span class="line">upstream <span class="built_in">test</span> &#123;  </span><br><span class="line">    server 192.168.33.11:80;  </span><br><span class="line">    server 192.168.33.12:80;  </span><br><span class="line">    &#125;  </span><br><span class="line">service &#123;</span><br><span class="line">    server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line"></span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://<span class="built_in">test</span>;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>nginx,负载均衡</tag>
@@ -103,6 +101,36 @@
       </tags>
   </entry>
   <entry>
+    <title>关于php调用shell权限问题</title>
+    <url>/2017/04/28/%E5%85%B3%E4%BA%8Ephp%E8%B0%83%E7%94%A8shell%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。</p>
+<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>原有代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$cmd</span> = <span class="string">&#x27;sh ./ng_config.sh&#x27;</span>; </span><br><span class="line"><span class="variable">$result</span> = shell_exec(<span class="variable">$cmd</span>);</span><br></pre></td></tr></table></figure>
+
+<p>修改后代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo &#x27;sh ./ng_config.sh 2&gt;&amp;1&#x27;;</span><br><span class="line">exec($cmd, $output, $return_val);</span><br></pre></td></tr></table></figure>
+
+<p>由于nginx设置的用户是www，没有办法看到权限高的错误返回信息，加上2&gt;&amp;1(将一个标准错误输出重定向到标准输出)之后,打印$output即可看到错误返回：权限不足，无法打开脚本的相关信息</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>既然知道了问题为权限不足，那么问题就是要解决php权限问题：</p>
+<ul>
+<li><p>编辑/etc/sudoers</p>
+</li>
+<li><p>加入www ALL=NOPASSWD:ALL</p>
+</li>
+<li><p>重启nginx</p>
+</li>
+</ul>
+<p>重新执行程序了，发现shell脚本就可以正常执行</p>
+<p>ps：除非业务需求尽量不要去修改nginx的用户权限，有很高的安全风险。</p>
+]]></content>
+      <categories>
+        <category>php</category>
+      </categories>
+      <tags>
+        <tag>php,shell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数据库设计中的14个技巧</title>
     <url>/2017/05/03/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E4%B8%AD%E7%9A%8414%E4%B8%AA%E6%8A%80%E5%B7%A7/</url>
     <content><![CDATA[<p>下述十四个技巧，是许多人在大量的数据库分析与设计实践中，逐步总结出来的。对于这些经验的运用，读者不能生帮硬套，死记硬背，而要消化理解，实事求是，灵活掌握。并逐步做到：在应用中发展，在发展中应用。</p>
@@ -141,36 +169,6 @@
 ]]></content>
       <tags>
         <tag>mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于php调用shell权限问题</title>
-    <url>/2017/04/28/%E5%85%B3%E4%BA%8Ephp%E8%B0%83%E7%94%A8shell%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>开发项目的的过程之中，php通过shell_exec()函数调用shell脚本，结果发现没有脚本反应（也没有错误反馈），排除了代码上的问题。</p>
-<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>原有代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$cmd</span> = <span class="string">&#x27;sh ./ng_config.sh&#x27;</span>; </span><br><span class="line"><span class="variable">$result</span> = shell_exec(<span class="variable">$cmd</span>);</span><br></pre></td></tr></table></figure>
-
-<p>修改后代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo &#x27;sh ./ng_config.sh 2&gt;&amp;1&#x27;;</span><br><span class="line">exec($cmd, $output, $return_val);</span><br></pre></td></tr></table></figure>
-
-<p>由于nginx设置的用户是www，没有办法看到权限高的错误返回信息，加上2&gt;&amp;1(将一个标准错误输出重定向到标准输出)之后,打印$output即可看到错误返回：权限不足，无法打开脚本的相关信息</p>
-<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>既然知道了问题为权限不足，那么问题就是要解决php权限问题：</p>
-<ul>
-<li><p>编辑/etc/sudoers</p>
-</li>
-<li><p>加入www ALL=NOPASSWD:ALL</p>
-</li>
-<li><p>重启nginx</p>
-</li>
-</ul>
-<p>重新执行程序了，发现shell脚本就可以正常执行</p>
-<p>ps：除非业务需求尽量不要去修改nginx的用户权限，有很高的安全风险。</p>
-]]></content>
-      <categories>
-        <category>php</category>
-      </categories>
-      <tags>
-        <tag>php,shell</tag>
       </tags>
   </entry>
   <entry>
