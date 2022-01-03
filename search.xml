@@ -54,6 +54,9 @@
 </ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http &#123;  </span><br><span class="line">    include       /etc/nginx/mime.types;  </span><br><span class="line">    default_type  application/octet-stream;  </span><br><span class="line"></span><br><span class="line">    log_format  main  <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>  </span><br><span class="line">                      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span>;  </span><br><span class="line"></span><br><span class="line">    access_log  /var/<span class="built_in">log</span>/nginx/access.log  main;  </span><br><span class="line"></span><br><span class="line">    sendfile        on;  </span><br><span class="line">    <span class="comment">#tcp_nopush     on;  </span></span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;  </span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;  </span></span><br><span class="line">upstream <span class="built_in">test</span> &#123;  </span><br><span class="line">    server 192.168.33.11:80;  </span><br><span class="line">    server 192.168.33.12:80;  </span><br><span class="line">    &#125;  </span><br><span class="line">service &#123;</span><br><span class="line">    server &#123;  </span><br><span class="line">    listen       80;  </span><br><span class="line">    server_name  192.168.33.10;    <span class="comment">#根据环境介绍，nginx server ip  </span></span><br><span class="line"></span><br><span class="line">    location / &#123;  </span><br><span class="line">           proxy_pass http://<span class="built_in">test</span>;    <span class="comment">#被代理的服务器ip  </span></span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;  </span><br><span class="line">                 &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">#注，upstream是定义在server&#123; &#125;之外的，不能定义在server&#123; &#125;内部。定义好upstream之后，用proxy_pass引用一下即可。</span></span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>nginx</category>
+      </categories>
       <tags>
         <tag>nginx,负载均衡</tag>
       </tags>
@@ -96,6 +99,9 @@
 
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">只需修改该段代码即可控制返回请求量的百分比，减轻线上服务器压力，至此整个安装过程结束  </span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>php</category>
+      </categories>
       <tags>
         <tag>XHGui,XHprof</tag>
       </tags>
@@ -167,6 +173,9 @@
 <h3 id="13-防止数据库设计打补丁的方法是“三少原则”"><a href="#13-防止数据库设计打补丁的方法是“三少原则”" class="headerlink" title="13. 防止数据库设计打补丁的方法是“三少原则”"></a>13. 防止数据库设计打补丁的方法是“三少原则”</h3><p>　　(1) 一个数据库中表的个数越少越好。只有表的个数少了，才能说明系统的E–R图少而精，去掉了重复的多余的实体，形成了对客观世界的高度抽象，进行了系统的数据集成，防止了打补丁式的设计;<br>　　(2) 一个表中组合主键的字段个数越少越好。因为主键的作用，一是建主键索引，二是做为子表的外键，所以组合主键的字段个数少了，不仅节省了运行时间，而且节省了索引存储空间;<br>　　(3) 一个表中的字段个数越少越好。只有字段的个数少了，才能说明在系统中不存在数据重复，且很少有数据冗余，更重要的是督促读者学会“列变行”，这样就防止了将子表中的字段拉入到主表中去，在主表中留下许多空余的字段。所谓“列变行”，就是将主表中的一部分内容拉出去，另外单独建一个子表。这个方法很简单，有的人就是不习惯、不采纳、不执行。<br>　　数据库设计的实用原则是：在数据冗余和处理速度之间找到合适的平衡点。“三少”是一个整体概念，综合观点，不能孤立某一个原则。该原则是相对的，不是绝对的。“三多”原则肯定是错误的。试想：若覆盖系统同样的功能，一百个实体(共一千个属性) 的E–R图，肯定比二百个实体(共二千个属性) 的E–R图，要好得多。<br>　　提倡“三少”原则，是叫读者学会利用数据库设计技术进行系统的数据集成。数据集成的步骤是将文件系统集成为应用数据库，将应用数据库集成为主题数据库，将主题数据库集成为全局综合数据库。集成的程度越高，数据共享性就越强，信息孤岛现象就越少，整个企业信息系统的全局E–R图中实体的个数、主键的个数、属性的个数就会越少。<br>　　提倡“三少”原则的目的，是防止读者利用打补丁技术，不断地对数据库进行增删改，使企业数据库变成了随意设计数据库表的“垃圾堆”，或数据库表的“大杂院”，最后造成数据库中的基本表、代码表、中间表、临时表杂乱无章，不计其数，导致企事业单位的信息系统无法维护而瘫痪。<br>　　“三多”原则任何人都可以做到，该原则是“打补丁方法”设计数据库的歪理学说。“三少”原则是少而精的原则，它要求有较高的数据库设计技巧与艺术，不是任何人都能做到的，因为该原则是杜绝用“打补丁方法”设计数据库的理论依据。</p>
 <h3 id="14-提高数据库运行效率的办法"><a href="#14-提高数据库运行效率的办法" class="headerlink" title="14. 提高数据库运行效率的办法"></a>14. 提高数据库运行效率的办法</h3><p>　　在给定的系统硬件和系统软件条件下，提高数据库系统的运行效率的办法是：<br>　　(1) 在数据库物理设计时，降低范式，增加冗余, 少用触发器, 多用存储过程。<br>　　(2) 当计算非常复杂、而且记录条数非常巨大时(例如一千万条)，复杂计算要先在数据库外面，以文件系统方式用C++语言计算处理完成之后，最后才入库追加到表中去。这是电信计费系统设计的经验。<br>　　(3) 发现某个表的记录太多，例如超过一千万条，则要对该表进行水平分割。水平分割的做法是，以该表主键PK的某个值为界线，将该表的记录水平分割为两个表。若发现某个表的字段太多，例如超过八十个，则垂直分割该表，将原来的一个表分解为两个表。<br>　　(4) 对数据库管理系统DBMS进行系统优化，即优化各种系统参数，如缓冲区个数。<br>　　(5) 在使用面向数据的SQL语言进行程序设计时，尽量采取优化算法。<br>　　总之，要提高数据库的运行效率，必须从数据库系统级优化、数据库设计级优化、程序实现级优化，这三个层次上同时下功夫。</p>
 ]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
       <tags>
         <tag>mysql</tag>
       </tags>
@@ -185,6 +194,9 @@
 
 <p>同理，如果你环境配置支持mysqli或者pdo，也要相应的修改该路径</p>
 ]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
       <tags>
         <tag>环境配置</tag>
       </tags>
